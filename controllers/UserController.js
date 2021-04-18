@@ -1,6 +1,9 @@
 var User = require("../models/User")
 class UserController{
-    async index(req, res){}
+    async index(req, res){
+        var users = await User.findAll();
+        res.json(users)
+    }
 
     async create(req, res){
         var {email, name, password} = req.body;
@@ -20,6 +23,14 @@ class UserController{
         if (password == undefined) {
             res.statusCode = 400;
             res.json({err: "This email is empty"})
+            return;
+        }
+
+        var emailExists = await User.findEmail(email)
+
+        if (emailExists) {
+            res.statusCode = 406;
+            res.json({err: "Email já cadastrado"})
             return;
         }
 
