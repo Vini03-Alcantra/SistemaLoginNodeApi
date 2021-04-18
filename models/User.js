@@ -13,6 +13,20 @@ class User {
         }
     }
 
+    async findById(id){
+        try {
+            var result = await knex.select(["id", "name", "email", "role"]).where({id: id}).table("users");
+            if (result.length > 0) {
+                return result[0];
+            } else {
+                return undefined;
+            }
+        } catch (err) {
+            console.log(err)
+            return undefined;
+        }
+    }
+
     async new(email, password, name){
         try {
             var hash = await bcrypt.hash(password, 12)
