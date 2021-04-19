@@ -43,6 +43,10 @@ class PasswordToken{
             return {status: false};
         }
     }
+
+    async setUsed(token){
+        await knex.update({used: 1}).where({token: token}).table("password_tokens")
+    }
 }
 
 module.exports = new PasswordToken();

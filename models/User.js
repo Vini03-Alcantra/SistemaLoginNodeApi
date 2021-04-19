@@ -1,5 +1,6 @@
 var knex = require("../database/connection")
-var bcrypt = require("bcrypt")
+var bcrypt = require("bcrypt");
+const PasswordToken = require("./PasswordToken");
 
 class User {
 
@@ -116,6 +117,7 @@ class User {
     async changePassword(newPassword, id, token){
         var hash = await bcrypt.hash(newPassword, 10);
         await knex.update({password: hash}).where({id: id}).table("users");
+        await PasswordToken.setUsed(token)
     }
 }
 
