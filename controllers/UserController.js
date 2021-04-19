@@ -1,5 +1,9 @@
 var User = require("../models/User")
 var PasswordToken = require("../models/PasswordToken")
+var jwt = require("jsonwebtoken")
+var bcrypt = require("bcrypt")
+
+var secret = "jierji034i0rt09549854jgbji0t4ji0tgjefu9hrfi0j?;v,rpkl";
 
 class UserController{
     async index(req, res){
@@ -71,7 +75,7 @@ class UserController{
         }
     }
 
-    async remmove(req, res){
+    async remove(req, res){
         var id = req.params.id;
 
         var result = await User.delete(id)
@@ -108,6 +112,24 @@ class UserController{
             res.status(406)
             res.send("Token inválido")
         }
+    }
+
+    async login(req, res){
+        var {email, password} = req.body;
+        var user = await User.findByEmail(email)
+
+        if (user != undefined) {
+            var resultado = await bcrypt.compare(password, user.password)
+            if (resultado) {
+                var token = jwt.sign({email: user.email, role: user.role}, secret);
+
+                res.status(200);
+                res.json({token: token})
+            }
+        } else {
+            res.json({status: false})
+        }
+
     }
 }
 
